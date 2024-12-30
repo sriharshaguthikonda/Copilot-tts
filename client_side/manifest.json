@@ -1,0 +1,24 @@
+{
+    "manifest_version": 3,
+    "name": "Fuck copilot",
+    "version": "1.0",
+    "description": "Search selected text on Perplexity AI and ChatGPT, reusing an open tab if available.",
+    "permissions": ["contextMenus", "scripting", "activeTab", "tabs", "storage"],
+    "host_permissions": [
+    "https://www.perplexity.ai/*",
+    "https://chat.openai.com/*",
+    "https://chat.openai.com/c/*"
+],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "action": {
+        "default_popup": "popup.html"
+    },
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["content_script.js"]
+        }
+    ]
+}
