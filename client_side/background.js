@@ -5,7 +5,7 @@ let chatGptTabId = null;
 // Function to search on Perplexity AI, reusing an open tab if available
 async function searchPerplexity(query) {
     console.log('searchPerplexity called with query:', query);
-    const updatedQuery = `according to NICE guidelines, what is the answer for the following :   ${query} `;
+    const updatedQuery = `what is the answer for the following :   ${query} `;
     const url = `https://www.perplexity.ai/search?q=${encodeURIComponent(updatedQuery)}`;
 
     // Check if there's an open Perplexity AI tab
