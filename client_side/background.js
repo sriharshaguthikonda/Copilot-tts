@@ -119,12 +119,17 @@ function createPopupContextMenu(selectionText, sender, cursorX, cursorY) {
     });
 
     const popupHtml = `
-        <div id="popup-context-menu" style="position: fixed; top: ${cursorY}px; left: ${cursorX}px; 
-        background: white; border: 1px solid black; z-index: 9999; padding: 10px;">
-            <button id="searchPerplexityButton">Search Perplexity AI</button>
-            <button id="searchChatGptButton">Search ChatGPT</button>
+        <div id="popup-context-menu" style="position: fixed; top: ${cursorY - 60}px; left: ${cursorX - 240}px; 
+        background: #333; color: #fff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); z-index: 9999;">
+            <button id="searchPerplexityButton" style="background: #ddc; color: #333; font-size: 14px; border: none; border-radius: 4px; padding: 8px 16px; cursor: pointer; transition: box-shadow 0.3s;">
+                Search Perplexity AI
+            </button>
+            <button id="searchChatGptButton" style="background: #ddf; color: #333; font-size: 14px; border: none; border-radius: 4px; padding: 8px 16px; cursor: pointer; transition: box-shadow 0.3s;">
+                Search ChatGPT
+            </button>
         </div>
     `;
+
 
     chrome.scripting.executeScript({
         target: { tabId: sender.tab.id },
@@ -154,32 +159,27 @@ function createPopupContextMenu(selectionText, sender, cursorX, cursorY) {
     });
 }
 
-// Context Menu Setup with Better Logging
+
+// Remove these lines from background.js:
 chrome.contextMenus.removeAll(() => {
     chrome.contextMenus.create({
         id: "searchPerplexity",
         title: "Search Perplexity AI for '%s'",
         contexts: ["selection"],
     });
-
     chrome.contextMenus.create({
         id: "searchChatGpt",
         title: "Search ChatGPT for '%s'",
         contexts: ["selection"],
     });
-    console.log('Context menus initialized');
 });
 
-
+// Update the message listener to only handle textSelected:
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     (async () => {
         try {
             console.log('Message received:', message);
-            if (message.action === "searchPerplexity" && message.query) {
-                await searchPerplexity(message.query);
-            } else if (message.action === "searchChatGpt" && message.query) {
-                await searchChatGpt(message.query);
-            } else if (message.action === "textSelected" && message.selectionText) {
+            if (message.action === "textSelected" && message.selectionText) {
                 createPopupContextMenu(message.selectionText, sender, message.cursorX, message.cursorY);
             }
             sendResponse({ status: "success" });
@@ -188,6 +188,5 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             sendResponse({ status: "error", error: error.message });
         }
     })();
-    // Return true to indicate that the response will be sent asynchronously
     return true;
 });
