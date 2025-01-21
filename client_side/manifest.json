@@ -5,10 +5,15 @@
     "description": "Search selected text on Perplexity AI and ChatGPT, reusing an open tab if available.",
     "permissions": ["contextMenus", "scripting", "activeTab", "tabs", "storage"],
     "host_permissions": [
-    "https://www.perplexity.ai/*",
-    "https://chat.openai.com/*",
-    "https://chat.openai.com/c/*"
-],
+        "https://www.perplexity.ai/*",
+        "https://chatgpt.com/*",
+        "https://chat.openai.com/c/*",
+        "https://www.typingclub.com/",
+        "https://chatgpt.com/c/*",
+        "https://dashboard.medrevisions.com/*",
+        "https://plabable.com/*",
+        "https://www.nice.org.uk/*"
+    ],
     "background": {
         "service_worker": "background.js"
     },

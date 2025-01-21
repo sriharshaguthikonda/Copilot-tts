@@ -26,79 +26,103 @@ async function searchPerplexity(query) {
         });
     }
 }
-async function searchChatGpt(query) {
-    console.log('searchChatGpt called with query:', query);
 
-    // Check if there's an open ChatGPT tab with variations in the URL
-    let [existingTab] = await chrome.tabs.query({ url: "*://chatgpt.com/*" });
-    console.log('Existing ChatGPT tab:', existingTab);
+
+// Define the selector for the send button
+const sendButtonSelector = 'button[aria-label="Send prompt"], button.btn.relative.btn-primary';
+
+
+// Function to simulate a click on the send button
+function clickSendButton() {
+    const sendButton = document.querySelector(sendButtonSelector);
+    if (sendButton) {
+        sendButton.click();
+    }
+}
+
+
+
+
+
+async function searchChatGpt(query) {
+    query = `According to NICE guidelines, what is the answer for the following :
+    <p></p>
+    <p></p> 
+    <p></p>
+    <p></p>
+    <p></p>
+    <p></p>
+    <p></p>
+    <p></p>
+    ${query} `;
+    console.log('searchChatGpt called with query:', query);
+    const CHATGPT_URL = "https://chatgpt.com/";
+    const SEND_BUTTON_SELECTOR = 'button[aria-label="Send prompt"], button.btn.relative.btn-primary';
+
+    // Check for existing ChatGPT tabs
+    let [existingTab] = await chrome.tabs.query({ 
+        url: "*://chatgpt.com/*",
+        status: 'complete'
+    });
+
+    const handleQuerySubmission = (tabId) => {
+        chrome.scripting.executeScript({
+            target: { tabId },
+            func: (query, SEND_BUTTON_SELECTOR) => {
+                const findPromptArea = () => {
+                    return document.querySelector('div[contenteditable="true"][id="prompt-textarea"]') ||                           document.querySelector('div[contenteditable][data-message-author-role="user"]');
+                };
+
+                const setQueryAndSend = () => {
+                    const promptArea = findPromptArea();
+                    if (promptArea) {
+                        // Set the query content
+                        promptArea.focus();
+                        promptArea.innerHTML = query;
+                        
+                        // Create input event to trigger UI updates
+                        const inputEvent = new Event('input', { bubbles: true });
+                        promptArea.dispatchEvent(inputEvent);
+
+                        // Wait for send button to be ready
+                        const observer = new MutationObserver((mutations, obs) => {
+                            const sendButton = document.querySelector(SEND_BUTTON_SELECTOR);
+                            if (sendButton && !sendButton.disabled) {
+                                sendButton.click();
+                                obs.disconnect();
+                            }
+                        });
+
+                        // Observe the entire document for changes
+                        observer.observe(document.body, {
+                            childList: true,
+                            subtree: true,
+                            attributes: true,
+                            attributeFilter: ['disabled']
+                        });
+
+                        // Fallback timeout to prevent infinite waiting
+                        setTimeout(() => observer.disconnect(), 5000);
+                    }
+                };
+
+                // Try immediately first
+                setQueryAndSend();
+            },
+            args: [query, SEND_BUTTON_SELECTOR]
+        });
+    };
 
     if (existingTab) {
-        // Focus on the existing ChatGPT tab
-        chrome.tabs.update(existingTab.id, { active: true });
-        chatGptTabId = existingTab.id; // Store this tab ID for future searches
-        console.log('Highlighted existing ChatGPT tab:', existingTab.id);
-
-        // Wait for the tab to load and then paste the query
-        chrome.tabs.onUpdated.addListener(function listener(tabId, changeInfo) {
-            if (tabId === chatGptTabId && changeInfo.status === 'complete') {
-                chrome.tabs.onUpdated.removeListener(listener);
-                chrome.scripting.executeScript({
-                    target: { tabId: chatGptTabId },
-                    func: (query) => {
-                        const promptArea = document.querySelector('div[contenteditable="true"][id="prompt-textarea"]');
-                        if (promptArea) {
-                            // Create a new <p> element
-                            const p = document.createElement('p');
-                            // Set the text content
-                            p.textContent = query;
-                            // Append the <p> element to the prompt area
-                            promptArea.appendChild(p);
-                            // Optionally, scroll to the bottom to ensure the new content is visible
-                            promptArea.scrollTop = promptArea.scrollHeight;
-                        } else {
-                            console.error('Prompt area not found');
-                        }
-
-                    },
-                    args: [query]
-                });
-            }
+        chrome.tabs.update(existingTab.id, { active: true }, () => {
+            handleQuerySubmission(existingTab.id);
         });
     } else {
-        // No existing ChatGPT tab found, create a new one
-        chrome.tabs.create({ url: "https://chat.openai.com/" }, (newTab) => {
-            chatGptTabId = newTab.id; // Store this tab ID for future searches
-            console.log('Created new ChatGPT tab:', newTab.id);
-
-            // Wait for the tab to load and then paste the query
+        chrome.tabs.create({ url: CHATGPT_URL }, (newTab) => {
             chrome.tabs.onUpdated.addListener(function listener(tabId, changeInfo) {
-                if (tabId === chatGptTabId && changeInfo.status === 'complete') {
+                if (tabId === newTab.id && changeInfo.status === 'complete') {
                     chrome.tabs.onUpdated.removeListener(listener);
-                    chrome.scripting.executeScript({
-                        target: { tabId: chatGptTabId },
-                        func: (query) => {
-                            const promptArea = document.querySelector('div[contenteditable="true"][id="prompt-textarea"]');
-                            if (promptArea) {
-                                // Set the content
-                                promptArea.innerHTML = `<p>${query}</p>`;
-                                // Simulate Enter key press
-                                const enterEvent = new KeyboardEvent('keydown', {
-                                    key: 'Enter',
-                                    code: 'Enter',
-                                    keyCode: 13,
-                                    which: 13,
-                                    bubbles: true,
-                                    cancelable: true,
-                                });
-                                promptArea.dispatchEvent(enterEvent);
-                                console.log('Pasted query into ChatGPT input area and sent');
-                            } else {
-                                console.error('Prompt area not found');
-                            }
-                        },
-                        args: [query]
-                    });
+                    handleQuerySubmission(newTab.id);
                 }
             });
         });
@@ -106,9 +130,12 @@ async function searchChatGpt(query) {
 }
 
 
+
+
+
 // Improved handling in createPopupContextMenu
 function createPopupContextMenu(selectionText, sender, cursorX, cursorY) {
-    console.log('Creating popup context menu for:', selectionText);
+    console.log('Creating popup context menu for:', selectionText); // Debugging statement
 
     chrome.scripting.executeScript({
         target: { tabId: sender.tab.id },
@@ -116,6 +143,8 @@ function createPopupContextMenu(selectionText, sender, cursorX, cursorY) {
             const existingPopup = document.getElementById('popup-context-menu');
             if (existingPopup) existingPopup.remove(); // Cleanup old popup
         },
+    }, () => {
+        console.log('Old popup removed if existed'); // Debugging statement
     });
 
     const popupHtml = `
@@ -130,21 +159,33 @@ function createPopupContextMenu(selectionText, sender, cursorX, cursorY) {
         </div>
     `;
 
-
     chrome.scripting.executeScript({
         target: { tabId: sender.tab.id },
         func: (popupHtml, selectionText) => {
+            console.log('Executing script to add popup'); // Debugging statement
             // Only add the popup if it doesn't already exist
             if (!document.getElementById('popup-context-menu')) {
                 document.body.insertAdjacentHTML('beforeend', popupHtml);
+                console.log('Popup added to the DOM'); // Debugging statement
+
+                // Stop propagation of mouseup event inside the popup
+                document.getElementById('popup-context-menu').addEventListener('mouseup', (e) => {
+                    e.stopPropagation();
+                });
 
                 // Event listeners for buttons
                 document.getElementById('searchPerplexityButton').addEventListener('click', () => {
-                    chrome.runtime.sendMessage({ action: 'searchPerplexity', query: selectionText });
+                    console.log('Search Perplexity button clicked'); // Debugging statement
+                    chrome.runtime.sendMessage({ action: 'searchPerplexity', query: selectionText }, (response) => {
+                        console.log('Search Perplexity response:', response); // Debugging statement
+                    });
                     document.getElementById('popup-context-menu').remove();
                 });
                 document.getElementById('searchChatGptButton').addEventListener('click', () => {
-                    chrome.runtime.sendMessage({ action: 'searchChatGpt', query: selectionText });
+                    console.log('Search ChatGPT button clicked'); // Debugging statement
+                    chrome.runtime.sendMessage({ action: 'searchChatGpt', query: selectionText }, (response) => {
+                        console.log('Search ChatGPT response:', response); // Debugging statement
+                    });
                     document.getElementById('popup-context-menu').remove();
                 });
 
@@ -153,34 +194,33 @@ function createPopupContextMenu(selectionText, sender, cursorX, cursorY) {
                     const popup = document.getElementById('popup-context-menu');
                     if (popup && !popup.contains(e.target)) popup.remove();
                 });
+            } else {
+                console.log('Popup already exists'); // Debugging statement
             }
         },
         args: [popupHtml, selectionText],
+    }, () => {
+        console.log('Popup script executed'); // Debugging statement
     });
 }
 
 
-// Remove these lines from background.js:
-chrome.contextMenus.removeAll(() => {
-    chrome.contextMenus.create({
-        id: "searchPerplexity",
-        title: "Search Perplexity AI for '%s'",
-        contexts: ["selection"],
-    });
-    chrome.contextMenus.create({
-        id: "searchChatGpt",
-        title: "Search ChatGPT for '%s'",
-        contexts: ["selection"],
-    });
-});
+
+
 
 // Update the message listener to only handle textSelected:
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     (async () => {
         try {
-            console.log('Message received:', message);
+            console.log('Message received:', message); // Debugging statement
             if (message.action === "textSelected" && message.selectionText) {
                 createPopupContextMenu(message.selectionText, sender, message.cursorX, message.cursorY);
+            } else if (message.action === 'searchPerplexity') {
+                console.log('Handling searchPerplexity action'); // Debugging statement
+                await searchPerplexity(message.query);
+            } else if (message.action === 'searchChatGpt') {
+                console.log('Handling searchChatGpt action'); // Debugging statement
+                await searchChatGpt(message.query);
             }
             sendResponse({ status: "success" });
         } catch (error) {
