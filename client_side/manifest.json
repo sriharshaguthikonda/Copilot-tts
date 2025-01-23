@@ -13,7 +13,7 @@
         "https://dashboard.medrevisions.com/*",
         "https://plabable.com/*",
         "https://www.nice.org.uk/*",
-        "https://chat.deepseek.com/a/chat/s/*"
+        "https://chat.deepseek.com/*"
     ],
     "background": {
         "service_worker": "background.js"

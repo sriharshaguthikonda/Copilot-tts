@@ -147,9 +147,17 @@ let deepSeekTabId = null;
 // Add new DeepSeek search function
 async function searchDeepSeek(query) {
     query = `According to NICE guidelines, what is the answer for the following :
-    ${query}`;
+    <p></p>
+    <p></p> 
+    <p></p>
+    <p></p>
+    <p></p>
+    <p></p>
+    <p></p>
+    <p></p>
+    ${query} `;
     console.log('searchDeepSeek called with query:', query);
-    const DEEPSEEK_URL = "https://chat.deepseek.com/a/chat/s/*";
+    const DEEPSEEK_URL = "https://chat.deepseek.com/*";
     const TEXTAREA_SELECTOR = 'textarea#chat-input';
     const SEND_BUTTON_SELECTOR = 'div[role="button"].f6d670';
 
