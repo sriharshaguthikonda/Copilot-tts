@@ -1,0 +1,110 @@
+{
+  "schemaVersion": "0.1.0",
+  "repo": {
+    "id": "sriharshaguthikonda__Copilot-tts",
+    "root": ".",
+    "remoteUrl": "https://github.com/sriharshaguthikonda/Copilot-tts.git",
+    "defaultBranch": "NICE",
+    "localPaths": [
+      "Copilot tts.code-workspace",
+      "Copilot.bat",
+      "client_side"
+    ]
+  },
+  "sourceState": {
+    "commit": "72a49bcd2cff2d274632c018c7afe4ea843d9bef",
+    "branch": "NICE",
+    "dirty": false,
+    "generatedForCommit": "72a49bcd2cff2d274632c018c7afe4ea843d9bef"
+  },
+  "policy": {
+    "profile": "basic",
+    "sensitivity": "private",
+    "committedArtifacts": [
+      "manifest"
+    ],
+    "allowMemoryPointer": false,
+    "allowGraphPilots": false,
+    "runOnPush": false
+  },
+  "generatedAt": "2026-06-01T05:33:09.958117Z",
+  "toolRuns": [
+    {
+      "id": "repomix.basic",
+      "tool": "repomix",
+      "mode": "basic",
+      "status": "skipped",
+      "outputRef": "artifacts/repomix/repo-map.json",
+      "warnings": [
+        "Repomix is unavailable on PATH.",
+        "Suggested command: `npx repomix --output artifacts/repomix/repo-map.json`.",
+        "Repomix output is a native artifact and is not committed by default.",
+        "Bare `npx` does not prove Repomix is installed; install `repomix` or verify it explicitly."
+      ]
+    },
+    {
+      "id": "aider.basic",
+      "tool": "aider",
+      "mode": "basic",
+      "status": "skipped",
+      "outputRef": "artifacts/aider/repo-map-guidance.md",
+      "warnings": [
+        "Aider records repo-map guidance without forcing an interactive run.",
+        "Aider is unavailable on PATH.",
+        "Baseline guidance output lives in an artifact path and is not committed by default."
+      ]
+    },
+    {
+      "id": "serena.basic",
+      "tool": "serena",
+      "mode": "basic",
+      "status": "skipped",
+      "outputRef": "artifacts/serena/symbols.json",
+      "warnings": [
+        "Serena records symbol-navigation guidance without auto-configuring global state.",
+        "Serena is unavailable on PATH and no command override is configured.",
+        "Symbol-navigation output lives in an artifact path and is not committed by default."
+      ]
+    }
+  ],
+  "artifacts": {
+    "manifestPath": ".repo-intel/manifest.json",
+    "summaryPath": ".repo-intel/summary.md",
+    "nativeOutputs": [
+      {
+        "name": "repomix",
+        "path": "artifacts/repomix/repo-map.json",
+        "kind": "native"
+      },
+      {
+        "name": "aider",
+        "path": "artifacts/aider/repo-map-guidance.md",
+        "kind": "native"
+      },
+      {
+        "name": "serena",
+        "path": "artifacts/serena/symbols.json",
+        "kind": "native"
+      },
+      {
+        "name": "repo-map-full",
+        "path": "artifacts/repo-map/repo-map-full.json",
+        "kind": "native"
+      }
+    ],
+    "workflowArtifacts": []
+  },
+  "contextLevels": {
+    "level0": "identity",
+    "level1": "summary",
+    "level2": "importantFiles",
+    "level3": "symbols",
+    "level4": "fullExport"
+  },
+  "staleness": "current",
+  "security": {
+    "ignorePolicy": ".repo-map-ignore",
+    "secretScanStatus": "skipped",
+    "sizeGateStatus": "skipped"
+  }
+}

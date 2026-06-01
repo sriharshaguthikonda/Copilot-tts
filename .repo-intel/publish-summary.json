@@ -1,0 +1,53 @@
+﻿{
+    "schemaVersion":  "repo-map-artifact-branch/v1",
+    "repo":  "sriharshaguthikonda/Copilot-tts",
+    "generatedAt":  "2026-06-01T06:04:27.7747583Z",
+    "source":  "Repo_maps GitHub footprint publish runner",
+    "publishBranch":  "repo-intel-artifacts",
+    "mapCount":  6,
+    "totalBytes":  139739,
+    "maps":  [
+                 {
+                     "name":  "NICE",
+                     "ref":  "refs/remotes/origin/NICE",
+                     "commit":  "72a49bcd2cff2d274632c018c7afe4ea843d9bef",
+                     "path":  ".repo-intel/branches/remote-origin/nice__72a49bcd2cff/repo-map-full.json",
+                     "bytes":  19807
+                 },
+                 {
+                     "name":  "NICE-test",
+                     "ref":  "refs/remotes/origin/NICE-test",
+                     "commit":  "72a49bcd2cff2d274632c018c7afe4ea843d9bef",
+                     "path":  ".repo-intel/branches/remote-origin/nice-test__72a49bcd2cff/repo-map-full.json",
+                     "bytes":  19807
+                 },
+                 {
+                     "name":  "chatgpt-perplexity",
+                     "ref":  "refs/remotes/origin/chatgpt-perplexity",
+                     "commit":  "d8446ba793576dab5ef8c0d2b02b49363ab68cf2",
+                     "path":  ".repo-intel/branches/remote-origin/chatgpt-perplexity__d8446ba79357/repo-map-full.json",
+                     "bytes":  17971
+                 },
+                 {
+                     "name":  "chtgpt-plxty-deepseek",
+                     "ref":  "refs/remotes/origin/chtgpt-plxty-deepseek",
+                     "commit":  "17ae14a1bc147634617fbe89feb6fc1c50de93d1",
+                     "path":  ".repo-intel/branches/remote-origin/chtgpt-plxty-deepseek__17ae14a1bc14/repo-map-full.json",
+                     "bytes":  34386
+                 },
+                 {
+                     "name":  "main",
+                     "ref":  "refs/remotes/origin/main",
+                     "commit":  "838ea568be6854f6877feae571a4267f6914ba49",
+                     "path":  ".repo-intel/branches/remote-origin/main__838ea568be68/repo-map-full.json",
+                     "bytes":  18144
+                 },
+                 {
+                     "name":  "master",
+                     "ref":  "refs/remotes/origin/master",
+                     "commit":  "16c67f4c5ecd7964906e4f97c2f4366ae0ee3786",
+                     "path":  ".repo-intel/branches/remote-origin/master__16c67f4c5ecd/repo-map-full.json",
+                     "bytes":  10609
+                 }
+             ]
+}
